@@ -170,7 +170,8 @@ void cd_shortcuts_on_bookmarks_event (CairoDockFMEventType iEventType, const gch
 	// split the list: items can have been removed
 	pOldBookmarkList = pIconsList->next;
 	pIconsList->next = NULL;
-	pOldBookmarkList->prev = NULL;
+	if (pOldBookmarkList)
+		pOldBookmarkList->prev = NULL;
 
 	// Bookmarks file has been modified
 	if (iEventType == CAIRO_DOCK_FILE_CREATED || iEventType == CAIRO_DOCK_FILE_MODIFIED)
