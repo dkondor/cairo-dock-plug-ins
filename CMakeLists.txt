@@ -1561,3 +1561,18 @@ if (NOT "${MODULES_INTEGRATION_MISSING}" STREQUAL "")
 	message (STATUS "It's maybe not required for the user but it's recommended to install them if you're a maintainer of Cairo-Dock's packages.")
 endif ()
 message ("")
+
+############# FPS_MONITOR #################
+set (with_fps_monitor no)
+if (enable-fps_monitor)
+	message (STATUS "> fps-monitor:")
+	set (GETTEXT_FPS_MONITOR ${GETTEXT_PLUGINS})
+	set (VERSION_FPS_MONITOR "0.0.1")
+	set (PACKAGE_FPS_MONITOR "cd-fps-monitor")
+	set (with_fps_monitor yes)
+	set (fps_monitordatadir "${pluginsdatadir}/fps-monitor")
+	configure_file (${CMAKE_CURRENT_SOURCE_DIR}/fps-monitor/data/fps-monitor.conf.in ${CMAKE_CURRENT_BINARY_DIR}/fps-monitor/data/fps-monitor.conf)
+	add_subdirectory (fps-monitor)
+endif()
+
+message (STATUS " - with fps-monitor applet:            ${with_fps_monitor}")
