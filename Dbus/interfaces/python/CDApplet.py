@@ -288,10 +288,7 @@ class CDApplet:
 		pass
 	
 	def _get_config(self):
-		try:
-			keyfile = ConfigParser.RawConfigParser() # python 2
-		except:
-			keyfile = configparser.RawConfigParser() # python 3
+		keyfile = configparser.RawConfigParser() # python 3
 		keyfile.read(self.cConfFile)
 		self.get_config(keyfile)
 	

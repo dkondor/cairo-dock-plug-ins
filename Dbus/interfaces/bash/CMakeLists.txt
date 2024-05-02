@@ -7,11 +7,8 @@ if (NOT "${CMAKE_CURRENT_BINARY_DIR}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
 	execute_process(COMMAND cp "${CMAKE_CURRENT_SOURCE_DIR}/CDBashApplet.py" ${CMAKE_CURRENT_BINARY_DIR})
 endif()
 
-if (PYTHON2_FOUND)
-	execute_process(COMMAND "${PYTHON2_EXECUTABLE}" "setup.py" "-q" "build" WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
-endif()
 if (PYTHON3_FOUND)
-	execute_process(COMMAND "${PYTHON3_EXECUTABLE}" "setup.py" "-q" "build" WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")  # if both are present, the build sub-folder will not have the same name, so we can build now and then install during the 'make install'.
+	execute_process(COMMAND "${PYTHON3_EXECUTABLE}" "setup.py" "-q" "build" WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
 endif()
 
 ########### install files ###############
