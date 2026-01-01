@@ -116,6 +116,13 @@ CD_APPLET_STOP_BEGIN
 	CD_APPLET_UNREGISTER_FOR_CLICK_EVENT;
 	CD_APPLET_UNREGISTER_FOR_BUILD_MENU_EVENT;
 	CD_APPLET_UNREGISTER_FOR_MIDDLE_CLICK_EVENT;
+	
+	if (myData.pCancel)
+	{
+		g_cancellable_cancel (myData.pCancel);
+		g_object_unref (G_OBJECT (myData.pCancel));
+		myData.pCancel = NULL;
+	}
 CD_APPLET_STOP_END
 
 

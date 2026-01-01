@@ -56,30 +56,77 @@ CD_APPLET_ON_CLICK_BEGIN
 	}
 CD_APPLET_ON_CLICK_END
 
+
+static gboolean bWarning = FALSE;
+
+static void _nm_got_enabled (GObject *pObj, GAsyncResult *pRes, gpointer ptr)
+{
+	GldiModuleInstance *myApplet = (GldiModuleInstance*)ptr;
+	CD_APPLET_ENTER;
+	
+	GError *err = NULL;
+	GDBusConnection *pConn = G_DBUS_CONNECTION (pObj);
+	GVariant *res = g_dbus_connection_call_finish (pConn, pRes, &err);
+	if (err)
+	{
+		if (! g_error_matches (err, G_IO_ERROR, G_IO_ERROR_CANCELLED) && !bWarning)
+		{
+			bWarning = TRUE; // only show this warning once, likely the service is not present
+			cd_warning ("Cannot get network state: %s", err->message);
+		}
+		g_error_free (err);
+	}
+	else
+	{
+		GVariant *tmp1 = g_variant_get_child_value (res, 0);
+		GVariant *tmp2 = g_variant_get_variant (tmp1);
+		if (g_variant_is_of_type (tmp2, G_VARIANT_TYPE ("b")))
+		{
+			gboolean bActive = g_variant_get_boolean (tmp2);
+			g_dbus_connection_call (pConn,
+				"org.freedesktop.NetworkManager",
+				"/org/freedesktop/NetworkManager",
+				"org.freedesktop.NetworkManager",
+				"Enable",
+				g_variant_new ("(b)", !bActive),
+				NULL,
+				G_DBUS_CALL_FLAGS_NO_AUTO_START | G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION,
+				-1, NULL, NULL, NULL); // not interested in the result
+		}
+		else cd_warning ("Unexpected type for 'NetworkingEnabled' property: %s", g_variant_get_type_string (tmp2));
+		g_variant_unref (tmp2);
+		g_variant_unref (tmp1);
+	}
+	g_variant_unref (res);
+	
+	CD_APPLET_LEAVE ();
+}
+
 static void _nm_sleep (GldiModuleInstance *myApplet)
 {
-	DBusGProxy *pDbusProxy = cairo_dock_create_new_system_proxy (
-			"org.freedesktop.NetworkManager",
-			"/org/freedesktop/NetworkManager",
-			"org.freedesktop.DBus.Properties");
-	g_return_if_fail (pDbusProxy != NULL);
+	CD_APPLET_ENTER;
 	
-	guint state = cairo_dock_dbus_get_property_as_uint (pDbusProxy,
+	GDBusConnection *pConn = g_bus_get_sync (G_BUS_TYPE_SYSTEM, NULL, NULL);
+	g_return_if_fail (pConn != NULL);
+	
+	if (! myData.pCancel)
+		myData.pCancel = g_cancellable_new ();
+	
+	g_dbus_connection_call (pConn,
 		"org.freedesktop.NetworkManager",
-		"State");
-	g_object_unref (pDbusProxy);
-	cd_debug ("current network state : %d", state);
+		"/org/freedesktop/NetworkManager",
+		"org.freedesktop.DBus.Properties",
+		"Get",
+		g_variant_new ("(ss)", "org.freedesktop.NetworkManager", "NetworkingEnabled"),
+		G_VARIANT_TYPE ("(v)"),
+		G_DBUS_CALL_FLAGS_NO_AUTO_START,
+		-1,
+		myData.pCancel,
+		_nm_got_enabled,
+		myApplet);
+	g_object_unref (G_OBJECT (pConn)); // refed by the above call
 	
-	pDbusProxy = cairo_dock_create_new_system_proxy (
-			"org.freedesktop.NetworkManager",
-			"/org/freedesktop/NetworkManager",
-			"org.freedesktop.NetworkManager");
-	g_return_if_fail (pDbusProxy != NULL);
-	dbus_g_proxy_call_no_reply (pDbusProxy, "Sleep",
-		G_TYPE_INVALID,
-		G_TYPE_BOOLEAN, state == 3,  // 3 = actif
-		G_TYPE_INVALID);
-	g_object_unref (pDbusProxy);
+	CD_APPLET_LEAVE ();
 }
 static void _netspeed_sleep (GtkMenuItem *menu_item, GldiModuleInstance *myApplet)
 {
