@@ -6,6 +6,6 @@ includedir = @dbusdatadir@
 Name: CDApplet
 Description: Library that wraps the Cairo-Dock's DBus interface into a convenient class.
 Requires: gobject-2.0 gio-2.0
-Libs: -L${libdir} -lCDApplet
+Libs: -L${libdir} -lCDApplet4
 Cflags: -I${dbusdatadir}
 Version: @VERSION_DBUS@

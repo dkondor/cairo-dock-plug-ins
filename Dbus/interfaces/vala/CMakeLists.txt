@@ -4,7 +4,7 @@
 # ${CMAKE_INSTALL_PREFIX} can change... so if we want to install new vala files,
 # we have to use this variable => we can put this variable into ValaVapiPath.txt.in...
 set (VALA_SHARE_PATH "${CMAKE_INSTALL_PREFIX}/share")
-set (CDAPPLET "CDApplet")
+set (CDAPPLET "CDApplet4")
 
 # if we want to produce new .c, .h, .vapi, .deps:
 if ("${VALAC_FOUND}" STREQUAL "TRUE")
