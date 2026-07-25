@@ -2,7 +2,7 @@
 
 cmake_minimum_required (VERSION 3.16.0)
 
-project ("cairo-dock-plugins" C)
+project ("cairo-dock4-plugins" C)
 
 find_package (PkgConfig)
 include (CheckLibraryExists)
@@ -13,9 +13,9 @@ include (GNUInstallDirs)
 
 ########### project ###############
 
-set (VERSION "3.6.101")
+set (VERSION "3.99.0")
 # can be different from VERSION, e.g. if a new version of plugins does not depend on things added to core
-set (CORE_REQUIRED_VERSION "3.6.101")
+set (CORE_REQUIRED_VERSION "3.99.0")
 
 add_definitions (-std=gnu99 -Wall -Werror-implicit-function-declaration) # -Wextra -Wwrite-strings -Wuninitialized -Werror-implicit-function-declaration -Wstrict-prototypes -Wreturn-type -Wparentheses -Warray-bounds)
 if (NOT DEFINED CMAKE_BUILD_TYPE)
@@ -60,19 +60,19 @@ set (PACKAGE ${CMAKE_PROJECT_NAME})
 
 if ("${PACKAGEMENT}" STREQUAL "") ## do not check if we're using the same version when packaging the application (e.g. if we just want to generate a tarball of a previous version)
 	# we need GLDI which contains most global var: check it now to avoid many errors with regex
-	pkg_check_modules (GLDI REQUIRED gldi>=${CORE_REQUIRED_VERSION})
+	pkg_check_modules (GLDI REQUIRED gldi4>=${CORE_REQUIRED_VERSION})
 endif ()
 
 set (dock_version ${VERSION}) # should be the same except if PACKAGEMENT is set
 
-pkg_get_variable(pluginsdir         gldi pluginsdir)
-pkg_get_variable(pluginsdatarootdir gldi pluginsdatarootdir)
-pkg_get_variable(prefix             gldi plugins_prefix)
-pkg_get_variable(localedir          gldi plugins_locale)
-pkg_get_variable(gettext_domain     gldi plugins_gettext)
-pkg_get_variable(gtkversion         gldi gtkversion)
-pkg_get_variable(pkgdatadir         gldi pkgdatadir)
-pkg_get_variable(HAVE_WAYLAND       gldi have_wayland)
+pkg_get_variable(pluginsdir         gldi4 pluginsdir)
+pkg_get_variable(pluginsdatarootdir gldi4 pluginsdatarootdir)
+pkg_get_variable(prefix             gldi4 plugins_prefix)
+pkg_get_variable(localedir          gldi4 plugins_locale)
+pkg_get_variable(gettext_domain     gldi4 plugins_gettext)
+pkg_get_variable(gtkversion         gldi4 gtkversion)
+pkg_get_variable(pkgdatadir         gldi4 pkgdatadir)
+pkg_get_variable(HAVE_WAYLAND       gldi4 have_wayland)
 
 # check that installation dir matches with the core
 if (NOT "${CMAKE_INSTALL_PREFIX}" STREQUAL "${prefix}")
@@ -125,8 +125,8 @@ message (STATUS "Check dependencies...")
 message (STATUS "=====================")
 message ("")
 
-pkg_check_modules ("PACKAGE" REQUIRED "gldi" "glib-2.0>=2.36")  # we check first the common libs that most plug-ins would need: basically, all the libs used by the core.
-STRING (REGEX REPLACE "gldi;" "" PACKAGE_LIBRARIES "${PACKAGE_LIBRARIES}")  # but we don't want to link to gldi, since we are dl-opened by it.
+pkg_check_modules ("PACKAGE" REQUIRED "gldi4" "glib-2.0>=2.36")  # we check first the common libs that most plug-ins would need: basically, all the libs used by the core.
+STRING (REGEX REPLACE "gldi4;" "" PACKAGE_LIBRARIES "${PACKAGE_LIBRARIES}")  # but we don't want to link to gldi, since we are dl-opened by it.
 
 # add_definitions (-DGTK_DISABLE_DEPRECATED="1")
 
