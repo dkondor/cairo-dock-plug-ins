@@ -146,6 +146,7 @@ static gboolean _cd_slide_on_click (gpointer data, Icon *pClickedIcon, CairoDock
 	else
 		return GLDI_NOTIFICATION_LET_PASS;
 }
+/*
 gboolean _cd_slide_on_press_button (GtkWidget* pWidget, GdkEventButton* pButton, CairoDock *pDock)
 {
 	CDSlideData *pData = pDock->pRendererData;
@@ -189,7 +190,7 @@ gboolean _cd_slide_on_press_button (GtkWidget* pWidget, GdkEventButton* pButton,
 		pData->bDraggingScrollbar = FALSE;
 	}
 	return FALSE;
-}
+}*/
 static gboolean _cd_slide_on_mouse_moved (gpointer data, CairoDock *pDock, gboolean *bStartAnimation)
 {
 	CDSlideData *pData = pDock->pRendererData;
@@ -395,6 +396,7 @@ static void cd_rendering_calculate_max_dock_size_diapo_simple (CairoDock *pDock)
 		gldi_object_register_notification (CAIRO_CONTAINER (pDock), NOTIFICATION_SMOOTH_SCROLL_ICON, (GldiNotificationFunc) _cd_slide_on_smooth_scroll, GLDI_RUN_AFTER, NULL);
 		gldi_object_register_notification (CAIRO_CONTAINER (pDock), NOTIFICATION_CLICK_ICON, (GldiNotificationFunc) _cd_slide_on_click, GLDI_RUN_FIRST, NULL);
 		gldi_object_register_notification (CAIRO_CONTAINER (pDock), NOTIFICATION_MOUSE_MOVED, (GldiNotificationFunc) _cd_slide_on_mouse_moved, GLDI_RUN_AFTER, NULL);
+		/** TODO -> use GtkGestureClick here as well !!
 		pData->iSidPressEvent = g_signal_connect (G_OBJECT (pDock->container.pWidget),
 			"button-press-event",
 			G_CALLBACK (_cd_slide_on_press_button),
@@ -402,7 +404,7 @@ static void cd_rendering_calculate_max_dock_size_diapo_simple (CairoDock *pDock)
 		pData->iSidReleaseEvent = g_signal_connect (G_OBJECT (pDock->container.pWidget),
 			"button-release-event",
 			G_CALLBACK (_cd_slide_on_press_button),
-			pDock);
+			pDock); */
 	}
 	
 	if (pDock->container.bIsHorizontal)
@@ -1675,8 +1677,8 @@ static void cd_rendering_render_diapo_simple_opengl (CairoDock *pDock)
 	if (pData->iDeltaHeight != 0) // on fait un clip pour les icones qui debordent.
 	{
 		// glScissor works in unscaled window coordinates, so we need to scale the area given to it
-		GdkWindow *gdkwindow = gldi_container_get_gdk_window (CAIRO_CONTAINER (pDock));
-		int scale = gdkwindow ? gdk_window_get_scale_factor (gdkwindow) : 1;
+		GdkSurface *gdkwindow = gldi_container_get_gdk_window (CAIRO_CONTAINER (pDock));
+		int scale = gdkwindow ? gdk_surface_get_scale_factor (gdkwindow) : 1;
 		int h = my_diapo_simple_arrowHeight + ARROW_TIP + my_diapo_simple_lineWidth;
 		glEnable (GL_SCISSOR_TEST);
 		if (pDock->container.bIsHorizontal)

@@ -202,6 +202,7 @@ static gboolean _cd_slide_on_smooth_scroll (gpointer data, Icon *pClickedIcon, C
 	return (bScrolled ? GLDI_NOTIFICATION_INTERCEPT : GLDI_NOTIFICATION_LET_PASS);
 }
 
+/*
 static gboolean _cd_slide_on_press_button (GtkWidget* pWidget, GdkEventButton* pButton, CairoDesklet *pDesklet)
 {
 	CDViewportParameters *pData = pDesklet->pRendererData;
@@ -249,7 +250,7 @@ static gboolean _cd_slide_on_press_button (GtkWidget* pWidget, GdkEventButton* p
 	}
 	return FALSE;
 }
-
+*/
 static gboolean _cd_slide_on_mouse_moved (gpointer data, CairoDesklet *pDesklet, gboolean *bStartAnimation)
 {
 	CDViewportParameters *pData = pDesklet->pRendererData;
@@ -304,6 +305,7 @@ static CDViewportParameters *configure (CairoDesklet *pDesklet, gpointer *pConfi
 	gldi_object_register_notification (CAIRO_CONTAINER (pDesklet), NOTIFICATION_SMOOTH_SCROLL_ICON, (GldiNotificationFunc) _cd_slide_on_smooth_scroll, GLDI_RUN_AFTER, NULL);
 	gldi_object_register_notification (CAIRO_CONTAINER (pDesklet), NOTIFICATION_MOUSE_MOVED, (GldiNotificationFunc) _cd_slide_on_mouse_moved, GLDI_RUN_FIRST, NULL);
 	gldi_object_register_notification (CAIRO_CONTAINER (pDesklet), NOTIFICATION_ENTER_ICON, (GldiNotificationFunc) on_enter_icon_slide, GLDI_RUN_FIRST, NULL);
+	/** TODO -> GtkGestureClick !!
 	pViewport->iSidPressEvent = g_signal_connect (G_OBJECT (pDesklet->container.pWidget),
 		"button-press-event",
 		G_CALLBACK (_cd_slide_on_press_button),
@@ -311,7 +313,7 @@ static CDViewportParameters *configure (CairoDesklet *pDesklet, gpointer *pConfi
 	pViewport->iSidReleaseEvent = g_signal_connect (G_OBJECT (pDesklet->container.pWidget),
 		"button-release-event",
 		G_CALLBACK (_cd_slide_on_press_button),
-		pDesklet);
+		pDesklet); */
 	
 	return pViewport;
 }
