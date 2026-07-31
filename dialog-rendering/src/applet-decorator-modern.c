@@ -141,11 +141,10 @@ void cd_decorator_draw_decorations_modern (cairo_t *pCairoContext, CairoDialog *
 
 static void _render_submenu (GtkWidget *pMenu, cairo_t *pCairoContext)
 {
-	GtkAllocation alloc;
-	gtk_widget_get_allocation (pMenu, &alloc);
+	const int w = gtk_widget_get_width (pMenu);
+	const int h = gtk_widget_get_height (pMenu);
 	
-	int w = alloc.width, h = alloc.height;
-	double fRadius = CD_RADIUS, fLineWidth = CD_LINE_WIDTH;
+	const double fRadius = CD_RADIUS, fLineWidth = CD_LINE_WIDTH;
 	double fFrameWidth, fFrameHeight;
 	fFrameWidth = w - 2*fRadius - fLineWidth;
 	fFrameHeight = h - 2*fRadius - fLineWidth;
@@ -193,7 +192,7 @@ static void _render_submenu (GtkWidget *pMenu, cairo_t *pCairoContext)
 	else
 		gldi_color_set_cairo_rgb (pCairoContext, &myDialogsParam.fBgColor);
 	
-	gldi_style_colors_paint_bg_color_with_alpha (pCairoContext, alloc.width, myDialogsParam.bUseDefaultColors ? -1. : myDialogsParam.fBgColor.rgba.alpha);
+	gldi_style_colors_paint_bg_color_with_alpha (pCairoContext, w, myDialogsParam.bUseDefaultColors ? -1. : myDialogsParam.fBgColor.rgba.alpha);
 }
 
 static void _render_menu (GtkWidget *pMenu, cairo_t *pCairoContext)
@@ -214,12 +213,11 @@ static void _render_menu (GtkWidget *pMenu, cairo_t *pCairoContext)
 		return;
 	}
 	
-	GtkAllocation alloc;
-	gtk_widget_get_allocation (pMenu, &alloc);
-	
-	int w = alloc.width, h = alloc.height;
-	int x, y;
-	gdk_window_get_position (gtk_widget_get_window (gtk_widget_get_toplevel(pMenu)), &x, &y);
+	GdkSurface *pSurface = gtk_native_get_surface (gtk_widget_get_native (pMenu));
+	const int w = gtk_widget_get_width (pMenu);
+	const int h = gtk_widget_get_height (pMenu);
+	const int x = gdk_popup_get_position_x (GDK_POPUP (pSurface));
+	const int y = gdk_popup_get_position_y (GDK_POPUP (pSurface));
 	
 	double fRadius = CD_RADIUS, fLineWidth = CD_LINE_WIDTH;
 	double fDockOffsetX = fLineWidth/2;
@@ -450,7 +448,7 @@ static void _render_menu (GtkWidget *pMenu, cairo_t *pCairoContext)
 	else
 		gldi_color_set_cairo_rgb (pCairoContext, &myDialogsParam.fBgColor);
 	
-	gldi_style_colors_paint_bg_color_with_alpha (pCairoContext, alloc.width, myDialogsParam.bUseDefaultColors ? -1. : myDialogsParam.fBgColor.rgba.alpha);
+	gldi_style_colors_paint_bg_color_with_alpha (pCairoContext, w, myDialogsParam.bUseDefaultColors ? -1. : myDialogsParam.fBgColor.rgba.alpha);
 }
 
 static void _setup_menu (GtkWidget *pMenu)
