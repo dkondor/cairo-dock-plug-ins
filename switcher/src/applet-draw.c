@@ -266,7 +266,7 @@ void cd_switcher_draw_main_icon_compact_mode (void)
 	
 	// chaque bureau/viewport.
 	int iNumDesktop=0, iNumViewportX=0, iNumViewportY=0;
-	int k = 0, N = g_desktopGeometry.iNbDesktops * g_desktopGeometry.iNbViewportX * g_desktopGeometry.iNbViewportY;
+	int k = 0, N = MAX (g_desktopGeometry.iNbDesktops * g_desktopGeometry.iNbViewportX * g_desktopGeometry.iNbViewportY, 1);
 	for (j = 0; j < myData.switcher.iNbLines && k < N; j ++)
 	{
 		for (i = 0; i < myData.switcher.iNbColumns && k < N; i ++)
@@ -497,7 +497,7 @@ void cd_switcher_draw_desktops_bounding_box (CairoDesklet *pDesklet)
 	w = myData.switcher.fOneViewportWidth/2;
 	h = myData.switcher.fOneViewportHeight/2;
 	int i, j;
-	int k = 0, N = g_desktopGeometry.iNbDesktops * g_desktopGeometry.iNbViewportX * g_desktopGeometry.iNbViewportY;
+	int k = 0, N = MAX (g_desktopGeometry.iNbDesktops * g_desktopGeometry.iNbViewportX * g_desktopGeometry.iNbViewportY, 1);
 	
 	for (j = 0; j < myData.switcher.iNbLines; j ++)  // lignes horizontales.
 	{
@@ -604,7 +604,7 @@ void cd_switcher_build_windows_list (GtkWidget *pMenu)
 	
 	// chaque bureau/viewport.
 	int iNumDesktop=0, iNumViewportX=0, iNumViewportY=0;
-	int k = 0, N = g_desktopGeometry.iNbDesktops * g_desktopGeometry.iNbViewportX * g_desktopGeometry.iNbViewportY;
+	int k = 0, N = MAX (g_desktopGeometry.iNbDesktops * g_desktopGeometry.iNbViewportX * g_desktopGeometry.iNbViewportY, 1);
 	int iIndex = cd_switcher_compute_index_from_desktop (myData.switcher.iCurrentDesktop, myData.switcher.iCurrentViewportX, myData.switcher.iCurrentViewportY);
 	GString *sDesktopName = g_string_new ("");
 	int i, j;

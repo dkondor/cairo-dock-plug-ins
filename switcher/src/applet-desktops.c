@@ -44,8 +44,8 @@ void cd_switcher_get_current_desktop (void)
 
 static void _cd_switcher_get_best_agencement (int iNbViewports, int *iBestNbLines, int *iBestNbColumns)
 {
-	*iBestNbLines = 0;
-	*iBestNbColumns = 0;
+	*iBestNbLines = 1;
+	*iBestNbColumns = 1;
 	cd_return_if_fail (iNbViewports != 0);
 	//g_print ("%s (%d)\n", __func__, iNbViewports);
 	
@@ -137,12 +137,16 @@ void cd_switcher_compute_nb_lines_and_columns (void)
 		if (w >= h)  // icon is wide.
 		{
 			myData.switcher.iNbLines = myConfig.iDesktopsLayout;  // single-line, 2-lines, etc. Note: currently the config window only gives us access to the "single-line" choice, we might add more.
-			myData.switcher.iNbColumns = ceil ((double) g_desktopGeometry.iNbDesktops * g_desktopGeometry.iNbViewportX * g_desktopGeometry.iNbViewportY / myData.switcher.iNbLines);
+			myData.switcher.iNbColumns = MAX (
+				ceil ((double) g_desktopGeometry.iNbDesktops * g_desktopGeometry.iNbViewportX * g_desktopGeometry.iNbViewportY / myData.switcher.iNbLines),
+				1);
 		}
 		else  // icon is high
 		{
 			myData.switcher.iNbColumns = myConfig.iDesktopsLayout;
-			myData.switcher.iNbLines = ceil ((double) g_desktopGeometry.iNbDesktops * g_desktopGeometry.iNbViewportX * g_desktopGeometry.iNbViewportY / myData.switcher.iNbColumns);
+			myData.switcher.iNbLines = MAX (
+				ceil ((double) g_desktopGeometry.iNbDesktops * g_desktopGeometry.iNbViewportX * g_desktopGeometry.iNbViewportY / myData.switcher.iNbColumns),
+				1);
 		}
 	}
 	myData.iPrevIndexHovered = -1;  // cela invalide le dernier bureau survole.
@@ -151,12 +155,13 @@ void cd_switcher_compute_nb_lines_and_columns (void)
 
 void cd_switcher_compute_coordinates_from_desktop (int iNumDesktop, int iNumViewportX, int iNumViewportY, int *iNumLine, int *iNumColumn)
 {
+	// safe default in case we have no desktops (e.g. no X11 WM running)
+	*iNumLine = 0;
+	*iNumColumn = 0;
+		
 	if (myData.switcher.iNbColumns == 0)  // may happen in desklet mode with a cube desktop, when the desklet is still 0x0.
-	{
-		*iNumLine = 0;
-		*iNumColumn = 0;
 		return;
-	}
+	
 	int index = cd_switcher_compute_index_from_desktop (iNumDesktop, iNumViewportX, iNumViewportY);
 	cd_switcher_compute_coordinates_from_index (index, iNumLine, iNumColumn);
 	cd_debug ("(%d;%d;%d) -> %d -> (%d;%d)", iNumDesktop, iNumViewportX, iNumViewportY, index, *iNumLine, *iNumColumn);
@@ -191,6 +196,10 @@ void cd_switcher_compute_coordinates_from_desktop (int iNumDesktop, int iNumView
 
 void cd_switcher_compute_desktop_from_coordinates (int iNumLine, int iNumColumn, int *iNumDesktop, int *iNumViewportX, int *iNumViewportY)
 {
+	*iNumDesktop = 0;
+	*iNumViewportX = 0;
+	*iNumViewportY = 0;
+	
 	int index = cd_switcher_compute_index_from_coordinates (iNumLine, iNumColumn);
 	cd_switcher_compute_desktop_from_index (index, iNumDesktop, iNumViewportX, iNumViewportY);
 	cd_debug ("(%d;%d) -> %d -> (%d;%d;%d)", iNumLine, iNumColumn, index, *iNumDesktop, *iNumViewportX, *iNumViewportY);
